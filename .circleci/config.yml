@@ -1,0 +1,38 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    working_directory: ~/repository
+    docker:
+      - image: python:3.6.5
+    environment:
+      AWS_ACCESS_KEY_ID: "AKIAIOSFODNN7EXAMPLE"
+      AWS_SECRET_ACCESS_KEY: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+      PIPENV_VENV_IN_PROJECT: true
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-pip-dependencies-{{ checksum "~/repository/src/Pipfile.lock" }}
+      - run:
+          name: Install dependencies
+          command: |
+            pip install --upgrade pip
+            pip install pipenv
+            if [ ! -d ./src/.venv ]; then
+                cd ~/repository/src
+                pipenv install
+                cd ~/repository
+            fi
+      - save_cache:
+          key: v1-pip-dependencies-{{ checksum "~/repository/src/Pipfile.lock" }}
+          paths:
+            - ~/repository/src/.venv
+      - run:
+          name: Run tests
+          command: |
+            cd ~/repository/src
+            pipenv run python manage.py test
