@@ -21,7 +21,7 @@ services:
         build:
             context: .
             dockerfile: ./docker/web/Dockerfile
-        command: sh -c './bin/wait-for-it.sh db:3306; ./bin/entrypoint.local.sh'
+        command: sh -c './bin/wait-for-it.sh db:3306 -t 60; ./bin/entrypoint.local.sh'
         env_file:
             - .env.db
             - .env.web
