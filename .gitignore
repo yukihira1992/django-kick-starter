@@ -102,7 +102,7 @@ ENV/
 
 
 # django static files
-src/static/
+src/collected_static/
 
 # docker
 docker/db/var/lib/mysql/

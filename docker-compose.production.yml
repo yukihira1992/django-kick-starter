@@ -33,8 +33,8 @@ services:
               source: ./docker/nginx/etc/nginx
               target: /etc/nginx
             - type: bind
-              source: ./src/static
-              target: /var/www/static
+              source: ./src/collected_static
+              target: /var/www/collected_static
         depends_on:
             - web
         logging:
