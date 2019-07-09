@@ -99,11 +99,3 @@ ENV/
 
 # mypy
 .mypy_cache/
-
-
-# django static files
-src/collected_static/
-
-# docker
-docker/db/var/lib/mysql/
-.env*
