@@ -5,34 +5,33 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/repository
+    working_directory: ~/repo
     docker:
-      - image: python:3.6.5
+      - image: circleci/python:3.6
     environment:
       AWS_ACCESS_KEY_ID: "AKIAIOSFODNN7EXAMPLE"
       AWS_SECRET_ACCESS_KEY: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-      PIPENV_VENV_IN_PROJECT: true
+      DJANGO_SECRET_KEY: "test"
+      PIPENV_PIPFILE: "web/src/Pipfile"
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v1-pip-dependencies-{{ checksum "~/repository/src/Pipfile.lock" }}
+            - v2-pip-dependencies-{{ checksum "web/src/Pipfile.lock" }}
+            - v2-pip-dependencies-
       - run:
           name: Install dependencies
           command: |
-            pip install --upgrade pip
-            pip install pipenv
-            if [ ! -d ./src/.venv ]; then
-                cd ~/repository/src
-                pipenv install
-                cd ~/repository
-            fi
+            python3 -m venv venv
+            . venv/bin/activate
+            pipenv install --dev --system
       - save_cache:
-          key: v1-pip-dependencies-{{ checksum "~/repository/src/Pipfile.lock" }}
+          key: v2-pip-dependencies-{{ checksum "web/src/Pipfile.lock" }}
           paths:
-            - ~/repository/src/.venv
+            - venv
       - run:
           name: Run tests
           command: |
-            cd ~/repository/src
-            pipenv run python manage.py test
+            . venv/bin/activate
+            cd web/src/
+            python manage.py test
